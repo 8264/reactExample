@@ -1,0 +1,136 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="js/react.min.js"></script>
+    <script src="js/react-dom.min.js"></script>
+    <script src="js/babel.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+<div id="example"></div>
+<div id="example1"></div>
+<div id="example2"></div>
+<div id="example3"></div>
+</body>
+<script type="text/babel">
+/*hello*/
+    class Hello extends React.Component{
+        render(){
+            return <div>Hello {this.props.name}</div>
+        }
+    }
+    ReactDOM.render(<Hello name="React"/>,document.getElementById("example"));
+
+
+
+/*time*/
+   class Time extends React.Component{
+       constructor(){
+           super();
+           this.state={time:0};
+       }
+       render(){
+           return <div>{this.state.time}</div>
+       }
+       componentDidMount(){
+           var num=0;
+           setInterval(()=>{
+               num++;
+               this.setState({time:num});
+           },1000)
+       }
+   }
+   ReactDOM.render(<Time />,document.getElementById("example1"));
+
+
+   /*todolist*/
+   class Title extends React.Component{
+       constructor(){
+           super();
+       }
+       render(){
+           return <h3>{this.props.title}</h3>
+       }
+   }
+   class List extends React.Component{
+       constructor(){
+           super();
+       }
+       render(){
+           return(<ul>{
+               this.props.listData.map((a,b) => {
+                   return <li key={b}>{a.text}</li>
+               })
+             }
+           </ul>)
+       }
+   }
+    class Todo extends React.Component{
+        constructor(props){
+            super(props);
+            this.state={text:"",arr:[]}
+        }
+        change(e){
+           var val=e.target.value;
+           this.setState({text:val})
+        }
+        submit(e){
+            e.preventDefault();
+            var obj={text:this.state.text,
+            id:Date.now()
+            };
+            this.setState((prevState)=>({
+                arr:prevState.arr.concat(obj),
+                text:""
+            }));
+        }
+        render(){
+            return (
+                    <div>
+                        <Title title="待办事项"></Title>
+                        <List listData={this.state.arr}></List>
+                        <form onSubmit={this.submit.bind(this)}>
+                            <input type="text" onChange={this.change.bind(this)} value={this.state.text}/>
+                            <input type="submit" value="发送"/>
+                        </form>
+                    </div>
+            )
+        }
+    }
+    ReactDOM.render(<Todo/>,document.getElementById("example2"));
+
+    /*双向数据绑定*/
+    class Mvvm extends React.Component{
+        constructor(){
+            super();
+            this.state={value:"在此输入内容"};
+        }
+        change(e){
+            var val=e.target.value;
+            this.setState({value:val});
+        }
+        focus(){
+            if(this.state.value=="在此输入内容")
+            this.setState({value:""});
+        }
+        blur(){
+            if(this.state.value==""){
+                this.setState({value:"在此输入内容"});
+            }
+        }
+        render(){
+            return(<div>
+                <h3>Input</h3>
+                <textarea onChange={this.change.bind(this)} value={this.state.value} onFocus={this.focus.bind(this)} onBlur={this.blur.bind(this)}/>
+                <h3>Output</h3>
+                <div>{this.state.value}</div>
+            </div>)
+        }
+    }
+    ReactDOM.render(<Mvvm/>,document.querySelector("#example3"));
+</script>
+</html>
